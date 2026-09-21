@@ -61,38 +61,37 @@ export function ResultsScreen({
       <TopNav onHome={onHome} onChangeAge={onChangeAge} onRestart={onRestart} />
       <div className="results-grid">
         <div className={showSparkles ? 'results-hero spark' : 'results-hero'}>
-          <figure className="photo-frame results-photo" data-tier={tier}>
-            <img
-              src={PANDITA_IMAGES[tier]}
-              width={900}
-              height={900}
-              alt="Dr. Pandita"
-            />
-          </figure>
-          {tier === 'expert' && <p className="badge">{EXPERT_BADGE}</p>}
-          <p className="speaker">Dr. Pandita</p>
-          <h1 ref={headingRef} tabIndex={-1} className="message" data-result-message>
-            {copy.message}
-          </h1>
-          <div className="stats">
-            <p>
-              Respuestas correctas: <strong data-correct-count>{correctCount} de {total}</strong>
-            </p>
-            <p>
-              Puntaje: <strong data-score>{score} de {maxScore}</strong>
-            </p>
+          <div className="results-identity">
+            <figure className="photo-frame results-photo" data-tier={tier}>
+              <img src={PANDITA_IMAGES[tier]} width={900} height={900} alt="Dr. Pandita" />
+            </figure>
+            {tier === 'expert' && <p className="badge">{EXPERT_BADGE}</p>}
           </div>
-          <ol className="summary-row" aria-label="Resumen visual">
-            {review.map((item) => (
-              <li key={item.question.id} data-ok={item.correct ? 'true' : 'false'}>
-                <span aria-hidden="true">{item.correct ? '✓' : '✗'}</span>
-                <span className="sr-only">
-                  Pregunta {item.index + 1} {item.correct ? 'correcta' : 'incorrecta'}.
-                </span>
-              </li>
-            ))}
-          </ol>
-          {streak >= 2 && <p className="streak best-streak">Mejor racha: {streak}</p>}
+          <div className="results-copy">
+            <p className="speaker">Dr. Pandita</p>
+            <h1 ref={headingRef} tabIndex={-1} className="message" data-result-message>
+              {copy.message}
+            </h1>
+            <div className="stats">
+              <p>
+                Respuestas correctas: <strong data-correct-count>{correctCount} de {total}</strong>
+              </p>
+              <p>
+                Puntaje: <strong data-score>{score} de {maxScore}</strong>
+              </p>
+            </div>
+            <ol className="summary-row" aria-label="Resumen visual">
+              {review.map((item) => (
+                <li key={item.question.id} data-ok={item.correct ? 'true' : 'false'}>
+                  <span aria-hidden="true">{item.correct ? '✓' : '✗'}</span>
+                  <span className="sr-only">
+                    Pregunta {item.index + 1} {item.correct ? 'correcta' : 'incorrecta'}.
+                  </span>
+                </li>
+              ))}
+            </ol>
+            {streak >= 2 && <p className="streak best-streak">Mejor racha: {streak}</p>}
+          </div>
           <button type="button" className="primary replay" data-action="replay" onClick={onReplay}>
             {copy.replayLabel}
           </button>
