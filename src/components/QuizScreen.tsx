@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { AGE_OPTIONS, questionsByAge, type AgeGroup } from '../data/questions.ts';
+import { panditaImage } from '../data/pandita.ts';
 import { trailingStreak, type AnswerRecord } from '../data/results.ts';
 import { Attribution } from './Attribution.tsx';
 import { TopNav } from './TopNav.tsx';
@@ -14,6 +15,7 @@ interface QuizScreenProps {
   locked: boolean;
   onSelect: (optionIndex: number) => void;
   onNext: () => void;
+  onBack: () => void;
   onHome: () => void;
   onChangeAge: () => void;
   onRestart: () => void;
@@ -27,6 +29,7 @@ export function QuizScreen({
   locked,
   onSelect,
   onNext,
+  onBack,
   onHome,
   onChangeAge,
   onRestart,
@@ -39,6 +42,7 @@ export function QuizScreen({
   const ageLabel = AGE_OPTIONS.find((option) => option.id === age)?.label ?? '';
   const streak = trailingStreak(answers);
   const isCorrect = locked && selected === question?.correctIndex;
+  const progress = Math.round(((index + 1) / total) * 100);
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -54,73 +58,89 @@ export function QuizScreen({
 
   return (
     <section className="screen quiz" data-screen="quiz" data-age={age}>
-      <TopNav onHome={onHome} onChangeAge={onChangeAge} onRestart={onRestart} />
-      <article className="quiz-card" key={question.id}>
-        <div className="quiz-head">
-          <div className="quiz-progress">
+      <TopNav
+        onHome={onHome}
+        onChangeAge={onChangeAge}
+        onRestart={onRestart}
+        onBack={onBack}
+        canBack={index > 0}
+      />
+      <article className="quiz-layout" key={question.id}>
+        <div className="companion-wrap">
+          <img
+            className="companion cutout"
+            src={panditaImage(age, 'vas-bien')}
+            width={724}
+            height={724}
+            alt="Dr. Pandita te acompaña en esta pregunta"
+          />
+        </div>
+        <div className="quiz-main">
+          <div className="quiz-head">
             <p className="level">{ageLabel}</p>
-            <p className="progress-label">Pregunta {index + 1} de {total}</p>
-            <div className="dots" aria-hidden="true">
-              {questions.map((item, dotIndex) => {
-                const answer = answers.find((entry) => entry.questionId === item.id);
-                const state = answer ? (answer.correct ? 'ok' : 'miss') : dotIndex === index ? 'current' : 'upcoming';
-                return <span key={item.id} className="dot" data-state={state} />;
-              })}
-            </div>
+            <p className="progress-label">
+              Pregunta {index + 1} de {total}
+            </p>
+            {streak >= 2 ? <p className="streak">Racha de {streak}</p> : null}
           </div>
-          {streak >= 2 && <p className="streak">Racha de {streak}</p>}
-        </div>
+          <div
+            className="track"
+            role="progressbar"
+            aria-valuenow={index + 1}
+            aria-valuemin={1}
+            aria-valuemax={total}
+            aria-label={`Pregunta ${index + 1} de ${total}`}
+          >
+            <span style={{ width: `${progress}%` }} />
+          </div>
+          <div className="dots" aria-hidden="true">
+            {questions.map((item, dotIndex) => {
+              const answer = answers.find((entry) => entry.questionId === item.id);
+              const state = answer ? (answer.correct ? 'ok' : 'miss') : dotIndex === index ? 'current' : 'upcoming';
+              return <span key={item.id} className="dot" data-state={state} />;
+            })}
+          </div>
 
-        <h1 ref={headingRef} tabIndex={-1} className="prompt" data-question={question.id}>
-          {question.prompt}
-        </h1>
+          <h1 ref={headingRef} tabIndex={-1} className="prompt" data-question={question.id}>
+            {question.prompt}
+          </h1>
 
-        <div className="options" role="group" aria-label="Opciones de respuesta">
-          {question.options.map((option, optionIndex) => {
-            const state = optionState(optionIndex, question.correctIndex, selected, locked);
-            const letter = LETTERS[optionIndex];
-            const status =
-              state === 'correct' ? ' Correcta.' : state === 'wrong' ? ' Tu respuesta.' : '';
-            return (
-              <button
-                key={option}
-                type="button"
-                className="option"
-                data-option={optionIndex}
-                data-state={state}
-                disabled={locked}
-                aria-pressed={selected === optionIndex}
-                aria-label={`${letter}. ${option}.${status}`}
-                onClick={() => onSelect(optionIndex)}
-              >
-                <span className="letter" aria-hidden="true">
-                  {letter}
-                </span>
-                <span className="option-label">{option}</span>
-                {state === 'correct' && (
-                  <span className="mark" aria-hidden="true">
-                    ✓
+          <div className="options" role="group" aria-label="Opciones de respuesta">
+            {question.options.map((option, optionIndex) => {
+              const state = optionState(optionIndex, question.correctIndex, selected, locked);
+              const letter = LETTERS[optionIndex];
+              const status = state === 'correct' ? ' Correcta.' : state === 'wrong' ? ' Tu respuesta.' : '';
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  className="option"
+                  data-option={optionIndex}
+                  data-state={state}
+                  disabled={locked}
+                  aria-pressed={selected === optionIndex}
+                  aria-label={`${letter}. ${option}.${status}`}
+                  onClick={() => onSelect(optionIndex)}
+                >
+                  <span className="letter" aria-hidden="true">
+                    {letter}
                   </span>
-                )}
-                {state === 'wrong' && (
-                  <span className="mark" aria-hidden="true">
-                    ✗
-                  </span>
-                )}
+                  <span className="option-label">{option}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {locked && (
+            <div ref={feedbackRef} className="feedback" role="status" data-ok={isCorrect ? 'true' : 'false'}>
+              <h2>{isCorrect ? '¡Muy bien!' : 'Así se cuida mejor la sonrisa'}</h2>
+              <p>{question.explanation}</p>
+              <button type="button" className="primary" data-action="next" onClick={onNext}>
+                {index + 1 >= total ? 'Ver resultado' : 'Siguiente pregunta'}
               </button>
-            );
-          })}
+            </div>
+          )}
         </div>
-
-        {locked && (
-          <div ref={feedbackRef} className="feedback" role="status" data-ok={isCorrect ? 'true' : 'false'}>
-            <h2>{isCorrect ? '¡Muy bien!' : 'Así se cuida mejor la sonrisa'}</h2>
-            <p>{question.explanation}</p>
-            <button type="button" className="primary" data-action="next" onClick={onNext}>
-              {index + 1 >= total ? 'Ver resultado' : 'Siguiente pregunta'}
-            </button>
-          </div>
-        )}
       </article>
       <Attribution />
     </section>
