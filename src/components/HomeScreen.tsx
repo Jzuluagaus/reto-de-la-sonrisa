@@ -43,6 +43,15 @@ export function HomeScreen({ onChoose }: HomeScreenProps) {
       <div className="hero">
         <div className="hero-copy">
           <p className="kicker">Smile Alegría Dental Studio</p>
+          <svg className="hero-smile" viewBox="0 0 120 16" aria-hidden="true">
+            <path
+              d="M4 3c22 14 90 14 112 0"
+              fill="none"
+              stroke="white"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+          </svg>
           <h1>Reto de la Sonrisa</h1>
           <p className="lead">Pon a prueba tus conocimientos y descubre cómo cuidar mejor tu sonrisa.</p>
           <p className="badge">5 preguntas · Resultado inmediato · Para toda la familia</p>
@@ -74,7 +83,9 @@ export function HomeScreen({ onChoose }: HomeScreenProps) {
             data-age={card.id}
             onClick={() => onChoose(card.id)}
           >
-            <img src={card.image} alt="" width={724} height={724} className="cutout" />
+            <span className="age-photo">
+              <img src={card.image} alt="" width={724} height={724} className="cutout" />
+            </span>
             <span className="age-copy">
               <span className="age-kicker">{card.eyebrow}</span>
               <span className="age-title">{card.title}</span>

@@ -104,7 +104,7 @@ src/
 
 La promoción de WhatsApp vive en `src/data/cta.ts` y solo se muestra al terminar las cinco preguntas. Depende de la edad elegida al inicio, no del puntaje: menores de 12 años agendan consulta y limpieza por $650, adolescentes la valoración de ortodoncia por $999 y adultos limpieza, evaluación y pastilla reveladora por $850. Mañana y Tarde arman el mensaje con horario AM o PM; si no hay horario, el texto pide conocer los horarios disponibles.
 
-El aspecto sigue la identidad de [Smile Alegría](https://www.smilealegria.com): Poppins y Raleway, durazno, menta y lila, botones en píldora y el logotipo del estudio.
+El aspecto sigue la identidad de [Smile Alegría](https://www.smilealegria.com): Poppins, aqua `#73C5CA`, índigo `#2F294E`, rosa `#E784CB`, lima y el logotipo del estudio. La promoción abre WhatsApp en un botón píldora; el resto de acciones usa esquinas suaves.
 
 ## Contenido
 
