@@ -1,11 +1,18 @@
+import type { AgeGroup } from './questions.ts';
+import type { ResultTier } from './results.ts';
+
 /**
- * Fotos del Dr. Pandita servidas desde /public.
- * Para sustituirlas, reemplaza los PNG y conserva estos nombres.
- * La guía está en el README.
+ * Ilustraciones oficiales del Dr. Pandita.
+ * Ruta: /images/dr-pandita/{edad}-{resultado}.png
+ * Edad: nino | adolescente | adulto
+ * Resultado: intentalo | vas-bien | excelente
  */
-export const PANDITA_IMAGES = {
-  motivating: '/dr-pandita/motivating.png',
-  smiling: '/dr-pandita/smiling.png',
-  celebrating: '/dr-pandita/celebrating.png',
-  expert: '/dr-pandita/expert.png',
-} as const;
+export function panditaImage(age: AgeGroup, tier: ResultTier): string {
+  return `/images/dr-pandita/${age}-${tier}.png`;
+}
+
+export const PANDITA_ALT: Record<ResultTier, string> = {
+  intentalo: 'Dr. Pandita con el pulgar arriba, animando a intentarlo otra vez',
+  'vas-bien': 'Dr. Pandita sonriendo, contento con el avance',
+  excelente: 'Dr. Pandita celebrando un resultado excelente',
+};

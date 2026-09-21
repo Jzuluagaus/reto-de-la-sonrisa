@@ -35,23 +35,17 @@ npx vercel
 
 ## Imágenes del Dr. Pandita
 
-La interfaz usa cuatro retratos. El anillo de color y la insignia **Experto en Sonrisas** los dibuja el CSS; no hace falta editar código para cambiar las fotos. Sustituye el archivo y conserva el nombre (PNG cuadrado, recomendado 720×720 o mayor):
+Hay nueve ilustraciones oficiales. La app muestra una sola, sin recorte, con `object-fit: contain`. El texto del resultado (título, mensaje y botón) va en HTML, no dentro de la imagen.
 
-| Resultado | Archivo | Cuándo se muestra |
-| --- | --- | --- |
-| Motivador | `public/dr-pandita/motivating.png` | 0–1 respuestas correctas |
-| Sonriente | `public/dr-pandita/smiling.png` | 2–3 correctas, y también la portada |
-| Celebrando | `public/dr-pandita/celebrating.png` | 4 correctas |
-| Experto | `public/dr-pandita/expert.png` | 5 correctas |
+La ruta es `/images/dr-pandita/{edad}-{resultado}.png`:
 
-Las rutas que carga la app están en `src/data/pandita.ts`:
+| Edad | 0–1 correctas (INTÉNTALO) | 2–3 (VAS BIEN) | 4–5 (EXCELENTE) |
+| --- | --- | --- | --- |
+| Niño(a) | `public/images/dr-pandita/nino-intentalo.png` | `public/images/dr-pandita/nino-vas-bien.png` | `public/images/dr-pandita/nino-excelente.png` |
+| Adolescente | `public/images/dr-pandita/adolescente-intentalo.png` | `public/images/dr-pandita/adolescente-vas-bien.png` | `public/images/dr-pandita/adolescente-excelente.png` |
+| Adulto | `public/images/dr-pandita/adulto-intentalo.png` | `public/images/dr-pandita/adulto-vas-bien.png` | `public/images/dr-pandita/adulto-excelente.png` |
 
-- `/dr-pandita/motivating.png`
-- `/dr-pandita/smiling.png`
-- `/dr-pandita/celebrating.png`
-- `/dr-pandita/expert.png`
-
-`public/dr-pandita/source.png` es el recorte limpio de la foto oficial, sin filtro de color. La app no lo muestra. Sirve como base si preparas variantes nuevas. Los PNG publicados no incluyen datos EXIF ni GPS de la foto original.
+4 y 5 respuestas correctas usan la misma imagen `excelente`. Para sustituir una ilustración, conserva el nombre exacto del archivo. La función que arma la ruta está en `src/data/pandita.ts`.
 
 ## Agregar preguntas
 
@@ -67,14 +61,11 @@ Edita `src/data/questions.ts`. Cada grupo (`nino`, `adolescente`, `adulto`) es u
 }
 ```
 
-`correctIndex` es `0`, `1`, `2` o `3`. El reto usa todas las preguntas del grupo, muestra «Pregunta X de N» y suma 100 puntos por acierto (máximo 100 × N). Con las 5 preguntas actuales, los resultados son:
+`correctIndex` es `0`, `1`, `2` o `3`. El reto usa todas las preguntas del grupo, muestra «Pregunta X de N» y suma 100 puntos por acierto (máximo 100 × N). El texto de cada resultado, distinto por edad, está en `src/data/results.ts`. Con el conteo de aciertos:
 
-- 0–1 correctas: mensaje de buen comienzo, botón «INTENTAR OTRA VEZ»
-- 2–3: «MEJORAR MI RESULTADO»
-- 4: «JUGAR DE NUEVO»
-- 5: insignia Experto en Sonrisas y «VOLVER A JUGAR»
-
-Si un grupo crece, se conserva esa proporción (todo correcto es experto; más de 60% celebra; más de 20% va bien; el resto es un buen comienzo).
+- 0–1: título «¡Buen comienzo!», botón «INTENTAR OTRA VEZ», imagen `intentalo`
+- 2–3: título «¡Vas muy bien!», botón «MEJORAR MI RESULTADO», imagen `vas-bien`
+- 4–5: título «¡Excelente!», botón «JUGAR DE NUEVO», imagen `excelente`
 
 ## Estructura
 
@@ -83,12 +74,17 @@ index.html
 vercel.json
 public/
   favicon.svg
-  dr-pandita/
-    motivating.png
-    smiling.png
-    celebrating.png
-    expert.png
-    source.png
+  images/
+    dr-pandita/
+      nino-intentalo.png
+      nino-vas-bien.png
+      nino-excelente.png
+      adolescente-intentalo.png
+      adolescente-vas-bien.png
+      adolescente-excelente.png
+      adulto-intentalo.png
+      adulto-vas-bien.png
+      adulto-excelente.png
 src/
   main.tsx
   App.tsx

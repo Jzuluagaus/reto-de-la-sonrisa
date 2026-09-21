@@ -3,8 +3,7 @@ export const WHATSAPP_URL =
 
 export const CTA_COPY = {
   title: '¡Continúa cuidando su sonrisa!',
-  intro: 'Agenda una limpieza dental infantil en Smile Alegría y recibe sin costo:',
-  perks: ['Aplicación de flúor', 'Pastilla reveladora de placa'],
+  body: 'Agenda una limpieza dental infantil en Smile Alegría y recibe sin costo aplicación de flúor y pastilla reveladora de placa.',
   note: 'El flúor ayuda a fortalecer el esmalte y la pastilla reveladora permite identificar las zonas que necesitan un mejor cepillado.',
   button: 'AGENDAR POR WHATSAPP',
   footer: 'Smile Alegría Dental Studio · Atención especializada para niños y adultos en León, Guanajuato.',

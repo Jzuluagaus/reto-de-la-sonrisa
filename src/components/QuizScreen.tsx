@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { AGE_OPTIONS, questionsByAge, type AgeGroup } from '../data/questions.ts';
-import { PANDITA_IMAGES } from '../data/pandita.ts';
 import { trailingStreak, type AnswerRecord } from '../data/results.ts';
 import { Attribution } from './Attribution.tsx';
 import { TopNav } from './TopNav.tsx';
@@ -58,7 +57,6 @@ export function QuizScreen({
       <TopNav onHome={onHome} onChangeAge={onChangeAge} onRestart={onRestart} />
       <article className="quiz-card" key={question.id}>
         <div className="quiz-head">
-          <img className="mini-pandita" src={PANDITA_IMAGES.smiling} alt="" width={900} height={900} />
           <div className="quiz-progress">
             <p className="level">{ageLabel}</p>
             <p className="progress-label">Pregunta {index + 1} de {total}</p>

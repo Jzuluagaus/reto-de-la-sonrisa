@@ -1,5 +1,4 @@
 import { AGE_OPTIONS, type AgeGroup } from '../data/questions.ts';
-import { PANDITA_IMAGES } from '../data/pandita.ts';
 import { Attribution } from './Attribution.tsx';
 
 interface HomeScreenProps {
@@ -9,16 +8,7 @@ interface HomeScreenProps {
 export function HomeScreen({ onChoose }: HomeScreenProps) {
   return (
     <section className="screen home" data-screen="home">
-      <div className="home-grid">
-        <figure className="photo-frame home-photo">
-          <img
-            src={PANDITA_IMAGES.smiling}
-            width={900}
-            height={900}
-            alt="Dr. Pandita, personaje del Reto de la Sonrisa"
-          />
-        </figure>
-        <div className="home-copy">
+      <div className="home-copy">
           <p className="kicker">Smile Alegría Dental Studio</p>
           <h1>Reto de la Sonrisa</h1>
           <p className="lead">Elige tu edad y descubre cuánto sabes sobre el cuidado de tu sonrisa.</p>
@@ -41,7 +31,6 @@ export function HomeScreen({ onChoose }: HomeScreenProps) {
               </button>
             ))}
           </div>
-        </div>
       </div>
       <Attribution />
     </section>

@@ -1,15 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { CTA_COPY, WHATSAPP_URL } from '../data/cta.ts';
-import { PANDITA_IMAGES } from '../data/pandita.ts';
+import { PANDITA_ALT, panditaImage } from '../data/pandita.ts';
 import { questionsByAge, type AgeGroup } from '../data/questions.ts';
-import {
-  bestStreak,
-  EXPERT_BADGE,
-  POINTS_PER_CORRECT,
-  RESULT_TIERS,
-  tierForScore,
-  type AnswerRecord,
-} from '../data/results.ts';
+import { POINTS_PER_CORRECT, resultCopy, tierForScore, type AnswerRecord } from '../data/results.ts';
 import { Attribution } from './Attribution.tsx';
 import { TopNav } from './TopNav.tsx';
 
@@ -38,10 +31,9 @@ export function ResultsScreen({
   ).length;
   const score = correctCount * POINTS_PER_CORRECT;
   const maxScore = total * POINTS_PER_CORRECT;
-  const tier = tierForScore(correctCount, total);
-  const copy = RESULT_TIERS[tier];
-  const streak = bestStreak(answers);
-  const showSparkles = age !== 'adulto' && (tier === 'celebrating' || tier === 'expert');
+  const tier = tierForScore(correctCount);
+  const copy = resultCopy(age, tier);
+  const imageSrc = panditaImage(age, tier);
   const review = questions.map((question, index) => {
     const answer = answers.find((item) => item.questionId === question.id);
     return {
@@ -59,58 +51,46 @@ export function ResultsScreen({
   return (
     <section className="screen results" data-screen="results" data-tier={tier} data-age={age}>
       <TopNav onHome={onHome} onChangeAge={onChangeAge} onRestart={onRestart} />
-      <div className="results-grid">
-        <div className={showSparkles ? 'results-hero spark' : 'results-hero'}>
-          <div className="results-identity">
-            <figure className="photo-frame results-photo" data-tier={tier}>
-              <img src={PANDITA_IMAGES[tier]} width={900} height={900} alt="Dr. Pandita" />
-            </figure>
-            {tier === 'expert' && <p className="badge">{EXPERT_BADGE}</p>}
-          </div>
-          <div className="results-copy">
-            <p className="speaker">Dr. Pandita</p>
-            <h1 ref={headingRef} tabIndex={-1} className="message" data-result-message>
-              {copy.message}
-            </h1>
-            <div className="stats">
-              <p>
-                Respuestas correctas: <strong data-correct-count>{correctCount} de {total}</strong>
-              </p>
-              <p>
-                Puntaje: <strong data-score>{score} de {maxScore}</strong>
-              </p>
-            </div>
-            <ol className="summary-row" aria-label="Resumen visual">
-              {review.map((item) => (
-                <li key={item.question.id} data-ok={item.correct ? 'true' : 'false'}>
-                  <span aria-hidden="true">{item.correct ? '✓' : '✗'}</span>
-                  <span className="sr-only">
-                    Pregunta {item.index + 1} {item.correct ? 'correcta' : 'incorrecta'}.
-                  </span>
-                </li>
-              ))}
-            </ol>
-            {streak >= 2 && <p className="streak best-streak">Mejor racha: {streak}</p>}
-          </div>
-          <button type="button" className="primary replay" data-action="replay" onClick={onReplay}>
-            {copy.replayLabel}
-          </button>
+      <div className="results-stack">
+        <div className="stats">
+          <p>
+            Respuestas correctas: <strong data-correct-count>{correctCount} de {total}</strong>
+          </p>
+          <p>
+            Puntaje: <strong data-score>{score} de {maxScore}</strong>
+          </p>
         </div>
-
+        <ol className="summary-row" aria-label="Resumen visual">
+          {review.map((item) => (
+            <li key={item.question.id} data-ok={item.correct ? 'true' : 'false'}>
+              <span aria-hidden="true">{item.correct ? '✓' : '✗'}</span>
+              <span className="sr-only">
+                Pregunta {item.index + 1} {item.correct ? 'correcta' : 'incorrecta'}.
+              </span>
+            </li>
+          ))}
+        </ol>
+        <figure className="results-art">
+          <img
+            src={imageSrc}
+            width={724}
+            height={724}
+            alt={PANDITA_ALT[tier]}
+            data-pandita={imageSrc}
+          />
+        </figure>
+        <h1 ref={headingRef} tabIndex={-1} className="result-title" data-result-title>
+          {copy.title}
+        </h1>
+        <p className="result-message" data-result-message>
+          {copy.message}
+        </p>
+        <button type="button" className="primary replay" data-action="replay" onClick={onReplay}>
+          {copy.replayLabel}
+        </button>
         <aside className="cta" aria-label="Agenda en Smile Alegría">
           <h2>{CTA_COPY.title}</h2>
-          <p className="cta-intro">{CTA_COPY.intro}</p>
-          <ul className="perk-list">
-            {CTA_COPY.perks.map((perk) => (
-              <li key={perk}>
-                <span className="perk-check" aria-hidden="true">
-                  ✓
-                </span>
-                {perk}
-              </li>
-            ))}
-          </ul>
-          <p className="fine">{CTA_COPY.note}</p>
+          <p className="cta-body">{CTA_COPY.body}</p>
           <a
             className="primary whatsapp"
             data-action="whatsapp"
@@ -121,6 +101,7 @@ export function ResultsScreen({
             {CTA_COPY.button}
             <span className="sr-only"> (se abre en una pestaña nueva)</span>
           </a>
+          <p className="fine">{CTA_COPY.note}</p>
           <p className="cta-footer">{CTA_COPY.footer}</p>
         </aside>
       </div>

@@ -1,6 +1,8 @@
+import type { AgeGroup } from './questions.ts';
+
 export const POINTS_PER_CORRECT = 100;
 
-export type ResultTier = 'motivating' | 'smiling' | 'celebrating' | 'expert';
+export type ResultTier = 'intentalo' | 'vas-bien' | 'excelente';
 
 export interface AnswerRecord {
   questionId: string;
@@ -9,43 +11,59 @@ export interface AnswerRecord {
 }
 
 export interface TierCopy {
+  title: string;
   message: string;
   replayLabel: string;
 }
 
-export const RESULT_TIERS: Record<ResultTier, TierCopy> = {
-  motivating: {
-    message: '¡Buen comienzo! Cada cosa nueva que aprendes ayuda a cuidar mejor tu sonrisa.',
-    replayLabel: 'INTENTAR OTRA VEZ',
+const REPLAY: Record<ResultTier, string> = {
+  intentalo: 'INTENTAR OTRA VEZ',
+  'vas-bien': 'MEJORAR MI RESULTADO',
+  excelente: 'JUGAR DE NUEVO',
+};
+
+const TITLES: Record<ResultTier, string> = {
+  intentalo: '¡Buen comienzo!',
+  'vas-bien': '¡Vas muy bien!',
+  excelente: '¡Excelente!',
+};
+
+const MESSAGES: Record<AgeGroup, Record<ResultTier, string>> = {
+  nino: {
+    intentalo:
+      'El Dr. Pandita sabe que puedes aprender mucho más. ¡Inténtalo otra vez y sigue cuidando tu sonrisa!',
+    'vas-bien':
+      'El Dr. Pandita está muy contento. Ya conoces varios secretos para mantener una sonrisa saludable.',
+    excelente: '¡El Dr. Pandita te felicita! Sabes mucho sobre cómo cuidar tu sonrisa.',
   },
-  smiling: {
-    message: '¡Vas muy bien! Ya conoces varios hábitos importantes para una sonrisa saludable.',
-    replayLabel: 'MEJORAR MI RESULTADO',
+  adolescente: {
+    intentalo:
+      'Ya comenzaste a descubrir cómo cuidar mejor tu sonrisa. Inténtalo nuevamente y supera tu resultado.',
+    'vas-bien':
+      'Conoces varios hábitos importantes. Un intento más podría convertirte en experto en sonrisas.',
+    excelente: '¡Excelente resultado! Estás preparado para tomar buenas decisiones sobre tu salud dental.',
   },
-  celebrating: {
-    message: '¡Excelente! Sabes mucho sobre el cuidado de tu sonrisa.',
-    replayLabel: 'JUGAR DE NUEVO',
-  },
-  expert: {
-    message: '¡Resultado perfecto! El Dr. Pandita te nombra Experto(a) en Sonrisas.',
-    replayLabel: 'VOLVER A JUGAR',
+  adulto: {
+    intentalo: 'Cada respuesta ayuda a reconocer mejores hábitos de salud dental. Inténtalo nuevamente.',
+    'vas-bien': 'Tienes buenos conocimientos sobre prevención y salud dental. Continúa reforzándolos.',
+    excelente:
+      'Excelente conocimiento de prevención y cuidado dental. Mantener estos hábitos ayuda a proteger la salud de toda la familia.',
   },
 };
 
-export const EXPERT_BADGE = 'Experto en Sonrisas';
+export function resultCopy(age: AgeGroup, tier: ResultTier): TierCopy {
+  return {
+    title: TITLES[tier],
+    message: MESSAGES[age][tier],
+    replayLabel: REPLAY[tier],
+  };
+}
 
-/**
- * Con 5 preguntas los tramos quedan así:
- * 0–1 motivating, 2–3 smiling, 4 celebrating, 5 expert.
- * Si el grupo crece, se conserva la misma proporción.
- */
-export function tierForScore(correct: number, total: number): ResultTier {
-  if (total <= 0 || correct <= 0) return 'motivating';
-  if (correct >= total) return 'expert';
-  const ratio = correct / total;
-  if (ratio > 0.6) return 'celebrating';
-  if (ratio > 0.2) return 'smiling';
-  return 'motivating';
+/** 0–1 intentalo, 2–3 vas-bien, 4–5 excelente. */
+export function tierForScore(correct: number): ResultTier {
+  if (correct <= 1) return 'intentalo';
+  if (correct <= 3) return 'vas-bien';
+  return 'excelente';
 }
 
 export function trailingStreak(answers: readonly { correct: boolean }[]): number {
@@ -55,14 +73,4 @@ export function trailingStreak(answers: readonly { correct: boolean }[]): number
     streak += 1;
   }
   return streak;
-}
-
-export function bestStreak(answers: readonly { correct: boolean }[]): number {
-  let best = 0;
-  let current = 0;
-  for (const answer of answers) {
-    current = answer.correct ? current + 1 : 0;
-    if (current > best) best = current;
-  }
-  return best;
 }
