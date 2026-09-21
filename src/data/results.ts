@@ -51,12 +51,23 @@ const MESSAGES: Record<AgeGroup, Record<ResultTier, string>> = {
   },
 };
 
+const TIPS: Record<AgeGroup, string> = {
+  nino: 'El flúor fortalece el esmalte. Cepillarse con ayuda de un adulto, mañana y noche, cuida las zonas que más se olvidan.',
+  adolescente:
+    'El hilo dental y moderar las bebidas azucaradas protegen el esmalte, también cuando hay brackets.',
+  adulto: 'Revisar encías y dientes con regularidad permite atender cambios pequeños antes de que duelan.',
+};
+
 export function resultCopy(age: AgeGroup, tier: ResultTier): TierCopy {
   return {
     title: TITLES[tier],
     message: MESSAGES[age][tier],
     replayLabel: REPLAY[tier],
   };
+}
+
+export function dentalTip(age: AgeGroup): string {
+  return TIPS[age];
 }
 
 /** 0–1 intentalo, 2–3 vas-bien, 4–5 excelente. */

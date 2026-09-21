@@ -69,20 +69,36 @@ export default function App() {
     });
   }
 
+  function openQuestion(index: number) {
+    if (phase.name !== 'quiz') return;
+    const question = questionsByAge[phase.age][index];
+    if (!question) return;
+    const existing = phase.answers.find((answer) => answer.questionId === question.id);
+    lockRef.current = Boolean(existing);
+    setPhase({
+      name: 'quiz',
+      age: phase.age,
+      answers: phase.answers,
+      index,
+      selected: existing ? existing.selectedIndex : null,
+      locked: Boolean(existing),
+    });
+  }
+
+  function goBack() {
+    if (phase.name !== 'quiz' || phase.index === 0) return;
+    openQuestion(phase.index - 1);
+  }
+
   function nextQuestion() {
     if (phase.name !== 'quiz' || !phase.locked) return;
     const total = questionsByAge[phase.age].length;
-    lockRef.current = false;
     if (phase.index + 1 >= total) {
+      lockRef.current = false;
       setPhase({ name: 'results', age: phase.age, answers: phase.answers });
       return;
     }
-    setPhase({
-      ...phase,
-      index: phase.index + 1,
-      selected: null,
-      locked: false,
-    });
+    openQuestion(phase.index + 1);
   }
 
   return (
@@ -101,6 +117,7 @@ export default function App() {
             locked={phase.locked}
             onSelect={selectOption}
             onNext={nextQuestion}
+            onBack={goBack}
             onHome={goHome}
             onChangeAge={goHome}
             onRestart={restart}
